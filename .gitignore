@@ -28,3 +28,5 @@ nbproject/
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
+
+docker/db/postgres-data
