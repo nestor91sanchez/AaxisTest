@@ -1,0 +1,38 @@
+# see https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3.5" # specify docker-compose version, v3.5 is compatible with docker 17.12.0+
+
+services:
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-aaxistest_db}
+      # You should definitely change the password in production
+      POSTGRES_USER: ${POSTGRES_USER:-axxisuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-aaxis2024}
+    volumes:
+      - ./docker/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker/db/postgres-data:/var/lib/postgresql/data
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - .:/var/www/framework
+    depends_on:
+      - database
+
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    volumes:
+      - .:/var/www/framework
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+
+volumes:
+  db_data:
